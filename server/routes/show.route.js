@@ -1,8 +1,16 @@
 import express from "express";
-import {getNowPlayingMovies} from "../controllers/show.Controller";
+import {
+  addShow,
+  getNowPlayingMovies,
+  getShow,
+  getShows,
+} from "../controllers/show.Controller.js";
+import {protectAdmin} from "../middlewares/auth.js";
 
-const router = express.Router();
+const showRouter = express.Router();
 
-router.get("/now-playing", getNowPlayingMovies);
-
-export default router;
+showRouter.get("/now-playing", protectAdmin, getNowPlayingMovies);
+showRouter.post("/add", protectAdmin, addShow);
+showRouter.get("/all", getShows);
+showRouter.get("/:movieId", getShow);
+export default showRouter;

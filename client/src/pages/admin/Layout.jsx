@@ -1,8 +1,13 @@
+import React from "react";
 import AdminNavbar from "../../components/admin/AdminNavbar";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import {Outlet} from "react-router-dom";
 
 const Layout = () => {
+  // We do NOT need to check for admin here or fetch data.
+  // App.jsx handles the protection. If this component renders,
+  // we know the user is already an admin.
+
   return (
     <>
       <AdminNavbar />
