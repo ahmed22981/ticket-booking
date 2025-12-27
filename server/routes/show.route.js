@@ -4,7 +4,7 @@ import {
   getNowPlayingMovies,
   getShow,
   getShows,
-} from "../controllers/show.Controller.js";
+} from "../controllers/show.controller.js";
 import {protectAdmin} from "../middlewares/auth.js";
 
 const showRouter = express.Router();
