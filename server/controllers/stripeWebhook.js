@@ -9,33 +9,38 @@ export const stripeWebhooks = async (req, res) => {
   let event;
 
   try {
+    //Use stripeInstance, and 3. Use the correct Webhook Secret
     event = stripeInstance.webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
+    console.log(`Webhooks Error: ${error.message}`);
     return res.status(400).send(`Webhooks Error: ${error.message}`);
   }
 
   try {
     switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object;
-        const sessionList = await stripeInstance.checkout.sessions.list({
-          payment_intent: paymentIntent.id,
-        });
-        const session = sessionList.data[0];
+      //Use the specific event for Checkout
+      case "checkout.session.completed": {
+        const session = event.data.object;
+
+        // Ensure passed bookingId in metadata when creating the checkout session
         const {bookingId} = session.metadata;
 
-        await Booking.findByIdAndUpdate(bookingId, {
-          isPaid: true,
-          paymentLink: "",
-        });
+        if (bookingId) {
+          await Booking.findByIdAndUpdate(bookingId, {
+            isPaid: true,
+            paymentLink: "", // Clear the link so it can't be reused
+          });
+          console.log(`Booking ${bookingId} marked as paid.`);
+        }
         break;
       }
+
       default:
-        console.log("Unhandle event type: ", event.type);
+        console.log("Unhandled event type: ", event.type);
     }
     res.json({received: true});
   } catch (error) {
