@@ -4,15 +4,15 @@ import Booking from "../models/Booking.js";
 export const stripeWebhooks = async (req, res) => {
   const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 
-  const sig = req.headers["stripe-signatre"];
+  const sig = req.headers["stripe-signature"];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = stripeInstance.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_SECRET_KEY
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
     return res.status(400).send(`Webhooks Error: ${error.message}`);
