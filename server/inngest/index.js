@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import sendEmail from "../configs/nodeMailer.js";
+import connectDB from "../configs/db.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({id: "ticket-booking"});
@@ -84,6 +85,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
   {id: "send-booking-confirmation-email"},
   {event: "app/show.booked"},
   async ({event, step}) => {
+    await connectDB();
     const {bookingId} = event.data;
 
     const booking = await Booking.findById(bookingId)
@@ -92,6 +94,11 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         populate: {path: "movie", model: "Movie"},
       })
       .populate("user");
+
+    if (!booking) {
+      console.log("Booking not found");
+      return;
+    }
 
     await sendEmail({
       to: booking.user.email,
