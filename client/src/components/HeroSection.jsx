@@ -1,13 +1,15 @@
 import {ArrowRight, Calendar1Icon, ClockIcon} from "lucide-react";
 import {assets} from "../assets/assets";
 import {useNavigate} from "react-router-dom";
+import bgImage from "../assets/backgroundImage.png";
 
 const HeroSection = () => {
   const navigate = useNavigate();
   return (
     <div
       className="flex flex-col items-start justify-center gap-4
-  px-6 md:px-16 lg:px-36 bg-[url('backgroundImage.png')] bg-cover bg-center h-screen"
+  px-6 md:px-16 lg:px-36 bg-cover bg-center h-screen"
+      style={{backgroundImage: `url(${bgImage})`}}
     >
       <img
         src={assets.marvelLogo}
